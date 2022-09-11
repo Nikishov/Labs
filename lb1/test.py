@@ -55,22 +55,22 @@ class Lexer():
                 self.current_state = States.nxtlit
             else:
                 self.current_state = States.error
-                print('Некорректный символ')
 
-        if self.current_state == States.stop:
-            print('Завершение')
-            return
 
-        if self.current_state == States.error:
-            print('Ошибка')
-            return
+        self.current_state = States.stop
+                
 
 def grep_regex():
     lex = Lexer()
     with open('test.txt') as f:
         for ch in f.read():
-            lex.send(ch)
-    print(''.join(lex.s))
+            if lex.current_state == States.error:
+                print('Некоректный символ в файле')
+                break
+            else:
+                lex.send(ch)
+    if lex.current_state != States.error:
+        print(''.join(lex.s))
 
 grep_regex()
 
