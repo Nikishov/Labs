@@ -1,6 +1,5 @@
 from enum import Enum
 
-
 class States(Enum):
     s0      = 's0'
     nxtlit  = 'nxtlit'
@@ -57,20 +56,20 @@ class Lexer():
                 self.current_state = States.error
 
 
-        self.current_state = States.stop
-                
-
 def grep_regex():
     lex = Lexer()
     with open('test.txt') as f:
         for ch in f.read():
             if lex.current_state == States.error:
-                print('Некоректный символ в файле')
+                print('Incorrect symbol in file!')
                 break
             else:
                 lex.send(ch)
     if lex.current_state != States.error:
         print(''.join(lex.s))
+
+    lex.current_state = States.stop
+
 
 grep_regex()
 
