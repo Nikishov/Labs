@@ -1,6 +1,5 @@
 from enum import Enum
 
-
 class States(Enum):
     s0      = 's0'
     nxtlit  = 'nxtlit'
