@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class States(Enum):
     s0      = 's0'
     nxtlit  = 'nxtlit'
@@ -9,54 +10,47 @@ class States(Enum):
 class Lexer():
     def __init__(self):
         self.current_state = States.s0
-        self.first_try = False
         self.s = []
+        
 
-    def send(self, char):
-        if self.current_state == States.s0:
-            if self.first_try:
-                if (char >= '0' and char <= '9'):
-                    self.current_state = States.nxtlit
-                elif (char >= 'a' and char <= 'z') or (char >= 'A' and char <= 'Z'):
-                    self.current_state = States.nxtlit
-                elif char == ' ':
-                    self.s.append(char)
-                    self.current_state = States.s0
-                elif char == '\n':
-                    self.current_state = States.nxtlit
-                else:
-                    self.current_state = States.error
+    def check(self, char):
+        match self.current_state:
+            case States.s0:
+                self.change_s0(char)
+            case States.nxtlit:
+                self.change_nxtlit(char)
 
-            else:
-                if (char >= 'a' and char <= 'z') or (char >= 'A' and char <= 'Z'):
-                    self.current_state = States.nxtlit
-                elif char == ' ':
-                    self.s.append(char)
-                    self.current_state = States.s0
-                elif char == '\n':
-                    self.current_state = States.nxtlit
-                else:
-                    self.current_state = States.error
 
-        if self.current_state == States.nxtlit:
-            if (char >= 'a' and char <= 'z') or (char >= 'A' and char <= 'Z'):
+    def change_s0(self, char):
+        self.current_state = States.s0
+        match char:
+            case _ if (char >= 'a' and char <= 'z') or (char >= 'A' and char <= 'Z'):
+                self.change_nxtlit(char)
+            case _ if char == ' ':
                 self.s.append(char)
-                self.current_state = States.nxtlit
-            elif (char >= '0' and char <= '9'):
-                self.s.append(char)
-                self.current_state = States.nxtlit
-            elif char == ' ':
-                self.s.append(char)
-                self.first_try = True
                 self.current_state = States.s0
-            elif char == '\n':
-                self.s.append(char)
-                self.current_state = States.nxtlit
-            else:
+            case _ if char == '\n':
+                self.change_nxtlit(char)
+            case _ :  
                 self.current_state = States.error
 
 
-def grep_regex():
+    def change_nxtlit(self, char):
+        self.current_state = States.nxtlit
+        match char:
+            case _ if (char >= 'a' and char <= 'z') or (char >= 'A' and char <= 'Z'):
+                self.s.append(char)
+            case _ if (char >= '0' and char <= '9'):
+                self.s.append(char)
+            case _ if char == ' ':
+                self.change_s0(char)
+            case _ if char == '\n':
+                self.s.append(char)
+            case _ :  
+                self.current_state = States.error
+                
+
+def test():
     lex = Lexer()
     with open('test.txt') as f:
         for ch in f.read():
@@ -64,12 +58,11 @@ def grep_regex():
                 print('Incorrect symbol in file!')
                 break
             else:
-                lex.send(ch)
+                lex.check(ch)
     if lex.current_state != States.error:
         print(''.join(lex.s))
 
     lex.current_state = States.stop
 
 
-grep_regex()
-
+test()
