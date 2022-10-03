@@ -87,10 +87,47 @@ class SingleLinkedList:
             print(value_to_print.data_value)
             value_to_print = value_to_print.next_value
 
+class LLInterface:
+    def __init__(self):
+        self.linked_list = SingleLinkedList()
 
-test = SingleLinkedList()
-test.insert_at_end(1)
-test.insert_at_end(2)
-test.insert_at_end(3)
-test.remove_first_element()
-print(test.print_list())
+    def convert_to_ll(self, iterable):
+        self.linked_list.head_value = Node(iterable[0])
+        nodes = [Node(value) for value in iterable]
+        for index, node in enumerate(nodes):
+            if index == 0:
+                self.linked_list.head_value = node
+            if index < len(nodes) - 1:
+                node.next_value = nodes[index + 1]
+
+    def contains_element(self, value):
+       return self.linked_list.contains(value)
+
+    def get_element(self, index):
+       return self.linked_list.get_data(index)
+    
+    def print_linked_list(self):
+        self.linked_list.print_list()
+
+    def add_first(self, value):
+        self.linked_list.insert_at_start(value)
+
+    def add_end(self, value):
+        self.linked_list.insert_at_end(value)
+
+    def pop_first(self):
+        self.linked_list.remove_first_element()
+
+    def pop_last(self):
+        self.linked_list.remove_last_element()
+
+    def pop_element(self, value):
+        self.linked_list.remove(value)
+
+
+
+ll = LLInterface()
+ll.add_end(1)
+ll.add_end(2)
+print(ll.get_element(1))
+ll.print_linked_list()
